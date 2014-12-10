@@ -31,12 +31,22 @@ class CodeGenerator:
         pass
 
     def generate_function_block(self, function):
+        """
+        /**FUNCTION NAME **/ (PyObject *dummy, PyObject *args)
+        {
+            /**VARIABLE INITIALIZATION **/
+
+            if (!PyArg_ParseTuple(args, /**FORMAT STRING**/, /**ARGUMENTS*/)) return NULL;
+        }
+        """
+}
         pass
 
     def generate_format_string(self, function):
         pass
 
     def generate_variable_instantiations(self, function):
+
         pass
 
     def generate_parse_tuple(self, function):
