@@ -48,7 +48,7 @@ class CodeGenerator:
         args = function['arguments'] 
         format_string = ''
         for arg in args:
-            format_string += arg['datatype']
+            format_string += arg['type']
         return format_string
     
     def generate_variable_instantiations(self, function):
