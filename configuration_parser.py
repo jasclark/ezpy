@@ -2,7 +2,27 @@ import re
 
 class ConfigurationParser:
 
-    # Parses configuration file, throws Error if unsuccessful
+    # Creates an internal dictionary representation of the config file:
+    # {
+    #     'name' : 'function_name',
+    #     'functions' : [
+    #                     {
+    #                         'name':'function1',
+    #                         'arguments': [
+    #                             {'datatype':'argname1'},
+    #                             {'datatype':'argname2'},
+    #                         ] 
+    #                     },
+    #                     {
+    #                         'name':'function2',
+    #                         'arguments': [
+    #                             {'datatype':'argname3'},
+    #                             {'datatype':'argname4'},
+    #                         ] 
+    #                     },
+    #                 ]
+    # }
+
     def parse(self, file_name):
         config_file = open(file_name)
         internal_config = {'name':None, 'functions':[]}
