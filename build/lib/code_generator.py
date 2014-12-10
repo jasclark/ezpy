@@ -43,8 +43,12 @@ class CodeGenerator:
         pass
 
     def generate_format_string(self, function):
-        pass
-
+        args = function['arguments'] 
+        format_string = ''
+        for arg in args:
+            format_string += arg['datatype']
+        return format_string
+    
     def generate_variable_instantiations(self, function):
 
         pass
