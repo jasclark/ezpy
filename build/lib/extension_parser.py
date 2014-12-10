@@ -21,5 +21,6 @@ class ExtensionParser:
         finally:
             db.close()
 
+        
 
 

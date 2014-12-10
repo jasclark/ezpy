@@ -1,4 +1,3 @@
-
 class CodeGenerator:
     def __init__(self, config):
         self.config = config
@@ -25,11 +24,9 @@ class CodeGenerator:
 
             # Do decrementing to objects
 
-
         # Create my methods struct
 
         # Create intialization function for the module
-
 
         pass
 
