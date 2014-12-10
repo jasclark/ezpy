@@ -26,9 +26,9 @@ class CodeGenerator:
             # Do decrementing to objects
 
         # Create my methods struct
-        f.write(generate_mymethods())
+        f.write(self.generate_mymethods())
         # Create intialization function for the module
-        f.write(generate_initialization())
+        f.write(self.generate_initialization())
         
         f.close()
         return
