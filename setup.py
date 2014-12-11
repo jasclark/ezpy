@@ -1,3 +1,5 @@
+import shelve
+
 #!/usr/bin/env python
 
 PROJECT = 'ezpy'
@@ -59,7 +61,7 @@ setup(
     zip_safe=False,
 )
 
-db = shelve.open('format_string.db')
+db = shelve.open('build/lib/format_string')
 try: 
     db['s'] = ['const char*']
     db['s#'] = ['const char*', 'int']

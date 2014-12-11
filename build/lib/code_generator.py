@@ -11,10 +11,11 @@ class CodeGenerator:
 
         # Include statements
 
+        for function in self.config['functions']:
         # For each function:
-
+            new_func = self.generate_function_block(function)
             # Create function signature with name
-
+            
             # Instantiate variables
 
             # Construct format string
@@ -25,6 +26,9 @@ class CodeGenerator:
 
             # Do decrementing to objects
 
+            # Write out function
+            f.write(new_func)
+
         # Create my methods struct
         f.write(self.generate_mymethods())
         # Create intialization function for the module
@@ -34,7 +38,7 @@ class CodeGenerator:
         return
 
     def generate_function_block(self, function):
-        """
+        return """
         /**FUNCTION NAME **/ (PyObject *dummy, PyObject *args)
         {
             /**VARIABLE INITIALIZATION **/
@@ -42,7 +46,6 @@ class CodeGenerator:
             if (!PyArg_ParseTuple(args, /**FORMAT STRING**/, /**ARGUMENTS*/)) return NULL;
         }
         """
-        pass
 
     def generate_format_string(self, function):
         args = function['arguments'] 
@@ -66,13 +69,12 @@ class CodeGenerator:
             ^METHODS^
             { "multiply", multiply_cfunc, METH_VARARGS, "Doc string"},
             {NULL, NULL, 0, NULL} /* Sentinel - marks the end of the structure*/
-        };
-        """
+        };"""
 
         method_defs = ""
 
         for function in self.config['functions']:
-            new_def = "{^MODULE_NAME^, ^FUNCTION_NAME^, METH_VARARGS, "Doc string"},\n"
+            new_def = """{^MODULE_NAME^, ^FUNCTION_NAME^, METH_VARARGS, "Doc string"},\n"""
             new_def.replace('^MODULE_NAME^', self.config['name'])
             new_def.replace('^FUNCTION_NAME^', function['name'])
             method_defs += new_def
@@ -81,7 +83,8 @@ class CodeGenerator:
         return mymethods_struct
 
     def generate_initialization(self):
-        init_func = """PyMODINIT_FUNC
+        init_func = """
+        PyMODINIT_FUNC
             initmatrix_multiply(void)
             {
                 (void)Py_InitModule(^MODULE_NAME^, mymethods);
