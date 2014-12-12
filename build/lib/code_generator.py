@@ -19,7 +19,7 @@ class CodeGenerator:
             # Create function signature with name
             new_func = new_func.replace('FUNCTION_NAME', self.config['name'])
             # Instantiate variables
-
+            new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
             # Construct format string
             new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
             # Construct ParseTuple function
@@ -59,10 +59,10 @@ class CodeGenerator:
     def generate_variable_instantiations(self, function):
         args = function['arguments']
         var_inst = ''
-        db = shelve.open('format_string.db')
+        db = shelve.open('build/lib/format_string')
         for arg in args:
             try:
-                var_inst += '*' +  db[arg['name']] + '=null,' 
+                var_inst += '*' +  db[arg['type']] + '=null,' 
             finally:
                 print("ERROR: Unsupported data-type")
                 db.close()
