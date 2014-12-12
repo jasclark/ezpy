@@ -22,12 +22,10 @@ class CodeGenerator:
             new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
             # Construct format string
             new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
-            # Construct ParseTuple function
-
-            # Insert 'code begins/ends' demarcations
-
+            # Generate arguments
+            new_func = new_func.replace('ARGUMENTS', self.generate_arguments(function))
             # Do decrementing to objects
-
+            new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
             # Write out function
             f.write(new_func)
 
@@ -46,6 +44,14 @@ class CodeGenerator:
             VARIABLE_INIT
 
             if (!PyArg_ParseTuple(args, FORMAT_STRING, ARGUMENTS)) return NULL;
+
+            /** Write your code here */
+
+            /** End code */
+
+            DECREMENT_REFERENCES
+
+            RETURN_STATEMENT
         }
         """
 
@@ -67,11 +73,23 @@ class CodeGenerator:
                 print("ERROR: Unsupported data-type")
                 db.close()
 
-    def generate_parse_tuple(self, function):
-        pass
+    def generate_arguments(self, function):
+        args = ''
+        for arg in function['arguments']:
+            args += '&' + arg['name'] + ','
+        return args[:-1]
 
-    def generate_decrement(self, function):
-        pass
+    def generate_decrement(self, function): 
+        decrement_string = ''
+        for arg in function['arguments']:
+            name = arg['name']
+            if name == 'O' or name == 'O!' or name == 'O&':
+                new_decrement = "Py_XDECREF(VARIABLE);\n"
+                new_decrement = new_decrement.replace('VARIABLE', name)
+                decrement_string += new_decrement
+
+        return decrement_string
+
 
     def generate_mymethods(self):
         mymethods_struct = """
