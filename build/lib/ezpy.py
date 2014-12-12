@@ -1,6 +1,7 @@
 from cliff.command import Command
 from configuration_parser import ConfigurationParser
 from code_generator import CodeGenerator
+from setup_script_generator import SetupScriptGenerator
 
 class Generate(Command):
 
@@ -15,6 +16,8 @@ class Generate(Command):
         config = config_parser.parse(parsed_args.config_file)
         code_generator = CodeGenerator(config)
         code_generator.generate()
+        setup_script_generator = SetupScriptGenerator()
+        setup_script_generator.generate(config)
 
 
 class Extend(Command):
