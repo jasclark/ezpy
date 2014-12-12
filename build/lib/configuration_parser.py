@@ -9,15 +9,15 @@ class ConfigurationParser:
     #                     {
     #                         'name':'function1',
     #                         'arguments': [
-    #                             {'datatype':'int', 'name':'arg1'},
-    #                             {'datatype':'string', 'name':'arg2'},
+    #                             {'type':'int', 'name':'arg1'},
+    #                             {'type':'string', 'name':'arg2'},
     #                         ] 
     #                     },
     #                     {
     #                         'name':'function2',
     #                         'arguments': [
-    #                             {'datatype':'int', 'name':'arg3'},
-    #                             {'datatype':'string', 'name':'arg4'},
+    #                             {'type':'int', 'name':'arg3'},
+    #                             {'type':'string', 'name':'arg4'},
     #                         ] 
     #                     },
     #                 ]
