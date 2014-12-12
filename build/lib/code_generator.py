@@ -7,7 +7,7 @@ class CodeGenerator:
     def generate(self):
         # May be missing steps...
         # Create a .c file with the name
-        f = open(self.config['name'], 'w')
+        f = open(self.config['name'] + '.c', 'w')
 
         # Include statements
 
@@ -15,11 +15,11 @@ class CodeGenerator:
         # For each function:
             new_func = self.generate_function_block(function)
             # Create function signature with name
-            
+            new_func = new_func.replace('FUNCTION_NAME', self.config['name'])
             # Instantiate variables
 
             # Construct format string
-
+            new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
             # Construct ParseTuple function
 
             # Insert 'code begins/ends' demarcations
@@ -39,11 +39,11 @@ class CodeGenerator:
 
     def generate_function_block(self, function):
         return """
-        /**FUNCTION NAME **/ (PyObject *dummy, PyObject *args)
+        FUNCTION_NAME(PyObject *dummy, PyObject *args)
         {
-            /**VARIABLE INITIALIZATION **/
+            VARIABLE_INIT
 
-            if (!PyArg_ParseTuple(args, /**FORMAT STRING**/, /**ARGUMENTS*/)) return NULL;
+            if (!PyArg_ParseTuple(args, FORMAT_STRING, ARGUMENTS)) return NULL;
         }
         """
 
@@ -66,34 +66,39 @@ class CodeGenerator:
     def generate_mymethods(self):
         mymethods_struct = """
         static struct PyMethodDef mymethods[] = {
-            ^METHODS^
-            { "multiply", multiply_cfunc, METH_VARARGS, "Doc string"},
+            METHODS
             {NULL, NULL, 0, NULL} /* Sentinel - marks the end of the structure*/
         };"""
 
         method_defs = ""
 
         for function in self.config['functions']:
-            new_def = """{^MODULE_NAME^, ^FUNCTION_NAME^, METH_VARARGS, "Doc string"},\n"""
-            new_def.replace('^MODULE_NAME^', self.config['name'])
-            new_def.replace('^FUNCTION_NAME^', function['name'])
+            new_def = """{PY_FUNCTION_NAME, FUNCTION_NAME, METH_VARARGS, "Doc string"},\n"""
+            new_def = new_def.replace('PY_FUNCTION_NAME', wrap_quotes(function['name']))
+            new_def = new_def.replace('FUNCTION_NAME', function['name'])
             method_defs += new_def
 
-        mymethods_struct.replace('^METHODS^', method_defs)
+        mymethods_struct = mymethods_struct.replace('METHODS', method_defs)
         return mymethods_struct
 
     def generate_initialization(self):
         init_func = """
         PyMODINIT_FUNC
-            initmatrix_multiply(void)
+            initMODULE_NAME(void)
             {
-                (void)Py_InitModule(^MODULE_NAME^, mymethods);
+                (void)Py_InitModule(MODULE_NAME, mymethods);
                 import_array();
             }
         """
 
-        init_func.replace('^MODULE_NAME^', self.config['name'])
+        init_func = init_func.replace('MODULE_NAME', self.config['name'], 1)
+        init_func = init_func.replace('MODULE_NAME', wrap_quotes(self.config['name']), 1)
+
         return init_func
+
+
+def wrap_quotes(string):
+    return '\"' + string + '\"'
 
 
 

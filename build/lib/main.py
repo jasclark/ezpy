@@ -2,7 +2,6 @@ import sys
 from cliff.app import App
 from cliff.commandmanager import CommandManager
 
-
 class EzpyApp(App):
 
     def __init__(self):
