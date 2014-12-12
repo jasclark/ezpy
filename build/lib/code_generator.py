@@ -59,7 +59,7 @@ class CodeGenerator:
     def generate_variable_instantiations(self, function):
         args = function['arguments']
         var_inst = ''
-        db = shelve.open('build/lib/format_string')
+        db = shelve.open('format_string')
         for arg in args:
             try:
                 var_inst += '*' +  db[arg['type']] + '=null,' 
