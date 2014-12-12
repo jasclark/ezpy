@@ -26,6 +26,9 @@ class CodeGenerator:
             new_func = new_func.replace('ARGUMENTS', self.generate_arguments(function))
             # Do decrementing to objects
             new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
+            # Generate return statement
+            new_func = new_func.replace('RETURN_STATEMENT', self.generate_return_statement(function))
+
             # Write out function
             f.write(new_func)
 
@@ -39,11 +42,11 @@ class CodeGenerator:
 
     def generate_function_block(self, function):
         return """
-        FUNCTION_NAME(PyObject *dummy, PyObject *args)
+        static PyObject* FUNCTION_NAME(PyObject *dummy, PyObject *args)
         {
             VARIABLE_INIT
 
-            if (!PyArg_ParseTuple(args, FORMAT_STRING, ARGUMENTS)) return NULL;
+            if (!PyArg_ParseTuple(args, FORMAT_STRING,ARGUMENTS)) return NULL;
 
             /** Write your code here */
 
@@ -76,7 +79,7 @@ class CodeGenerator:
     def generate_arguments(self, function):
         args = ''
         for arg in function['arguments']:
-            args += '&' + arg['name'] + ','
+            args += ' &' + arg['name'] + ','
         return args[:-1]
 
     def generate_decrement(self, function): 
@@ -90,6 +93,9 @@ class CodeGenerator:
 
         return decrement_string
 
+    def generate_return_statement(self, function):
+        default_none_return = "Py_RETURN_NONE;"
+        return default_none_return
 
     def generate_mymethods(self):
         mymethods_struct = """
