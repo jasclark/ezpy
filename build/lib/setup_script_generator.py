@@ -16,7 +16,9 @@ class SetupScriptGenerator:
               )
         """
 
+        script_string = script_string.replace('MODULE_NAME', config['name'])
+
         script = open(config['name'] + '_setup.py', 'w')
         script.write(script_string)
-        
+
 
