@@ -79,7 +79,8 @@ class CodeGenerator:
     def generate_arguments(self, function):
         args = ''
         for arg in function['arguments']:
-            args += ' &' + arg['name'] + ','
+            for name in arg['name']:
+                args += ' &' + name + ','
         return args[:-1]
 
     def generate_decrement(self, function): 

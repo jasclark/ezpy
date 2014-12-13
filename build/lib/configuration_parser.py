@@ -59,7 +59,8 @@ class ConfigurationParser:
 
                     arg_match = arg_re.match(line)
                     if arg_match:
-                        type_name_pair = {'type':arg_match.group(1), 'name':arg_match.group(2)}
+                        names = arg_match.group(2).split(',')
+                        type_name_pair = {'type':arg_match.group(1), 'name':names}
                         new_function['arguments'].append(type_name_pair)
 
                     else:
