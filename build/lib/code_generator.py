@@ -42,7 +42,7 @@ class CodeGenerator:
         f.close()
 
         # Indent the output c file using indent command. Built into Unix.
-        call(["indent", output_file_name])
+        call(["indent", '-di1', output_file_name])
         call(["rm", output_file_name + ".BAK"])
         return
 
@@ -105,11 +105,12 @@ class CodeGenerator:
     def generate_decrement(self, function): 
         decrement_string = ''
         for arg in function['arguments']:
-            name = arg['name']
-            if name == 'O' or name == 'O!' or name == 'O&':
-                new_decrement = "Py_XDECREF(VARIABLE);\n"
-                new_decrement = new_decrement.replace('VARIABLE', name)
-                decrement_string += new_decrement
+            data_type = arg['type']
+            if data_type == 'O' or data_type == 'O!' or data_type == 'O&':
+                for name in arg['name']:
+                    new_decrement = "Py_XDECREF(VARIABLE);\n"
+                    new_decrement = new_decrement.replace('VARIABLE', name)
+                    decrement_string += new_decrement
 
         return decrement_string
 
@@ -141,7 +142,7 @@ class CodeGenerator:
         return mymethods_struct
 
     def generate_initialization(self):
-        init_func = """
+        init_func = """\n
         PyMODINIT_FUNC
             initMODULE_NAME(void)
             {
