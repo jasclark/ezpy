@@ -2,10 +2,9 @@ import shelve
 import re
 class ExtensionParser:
 
-    CONVERSION_DB = 'conversion.db'
-
     # Parses extension configuration file, throws Error if unsuccessful
     def parse(self,file_name):
+        EXTENSION_DB = 'build/lib/extension.db'
         extension_file = open(file_name)
         # extension_dict = {'include':None, 
         #                     'data_type':None,
@@ -39,7 +38,8 @@ class ExtensionParser:
             if dataType_match: 
                 print("DATATYPE_MATCH")
                 print(dataType_match)
-                extension_dict['data_type'] = dataType_match.group(1)
+                #extension_dict['data_type'] = dataType_match.group(1)
+                data_type = dataType_match.group(1)
 
             numVars_match = numVars_re.match(line)
             if numVars_match:
@@ -76,14 +76,10 @@ class ExtensionParser:
                 print(extension_dict['code'])
             line = extension_file.readline()
 
-        print("extension_dict")
-        # print extension_dict
-        return extension_dict
-
         # Write out to database
-        db = shelve.open(CONVERSION_DB)
+        db = shelve.open(EXTENSION_DB)
         try:
-            db[data_type] = conversion_function
+            db[data_type] = extension_dict
         finally:
             db.close()
 
