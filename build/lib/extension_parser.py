@@ -2,10 +2,9 @@ import shelve
 import re
 class ExtensionParser:
 
-    EXTENSION_DB = 'extension.db'
-
     # Parses extension configuration file, throws Error if unsuccessful
     def parse(self,file_name):
+        EXTENSION_DB = 'build/lib/extension.db'
         extension_file = open(file_name)
         # extension_dict = {'include':None, 
         #                     'data_type':None,
@@ -76,8 +75,6 @@ class ExtensionParser:
                 print("Where are you code?")
                 print(extension_dict['code'])
             line = extension_file.readline()
-
-        print("extension_dict")
 
         # Write out to database
         db = shelve.open(EXTENSION_DB)
