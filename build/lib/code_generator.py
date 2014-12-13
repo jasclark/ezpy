@@ -1,4 +1,5 @@
 import shelve
+from subprocess import call
 
 class CodeGenerator:
     def __init__(self, config):
@@ -9,7 +10,8 @@ class CodeGenerator:
     def generate(self):
         # May be missing steps...
         # Create a .c file with the name
-        f = open(self.config['name'] + '.c', 'w')
+        output_file_name = self.config['name'] + '.c'
+        f = open(output_file_name, 'w')
 
         # Include statements
 
@@ -38,6 +40,10 @@ class CodeGenerator:
         f.write(self.generate_initialization())
         
         f.close()
+
+        # Indent the output c file using indent command. Built into Unix.
+        call(["indent", output_file_name])
+        call(["rm", output_file_name + ".BAK"])
         return
 
     def generate_function_block(self, function):
