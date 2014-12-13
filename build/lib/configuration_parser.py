@@ -9,8 +9,8 @@ class ConfigurationParser:
     #                     {
     #                         'name':'function1',
     #                         'arguments': [
-    #                             {'type':'int', 'name':'arg1'},
-    #                             {'type':'string', 'name':'arg2'},
+    #                             {'type':'O!', 'name':['arg1', 'arg2']},
+    #                             {'type':'s', 'name':['arg2']},
     #                         ] 
     #                     },
     #                     {
@@ -71,10 +71,6 @@ class ConfigurationParser:
                 line = config_file.readline()
         print internal_config
         return internal_config
-
-if __name__ == '__main__':
-    parser = ConfigurationParser()
-    print(parser.parse('tests/test.config'))
 
 
 
