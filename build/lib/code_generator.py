@@ -21,7 +21,7 @@ class CodeGenerator:
             # Create function signature with name
             new_func = new_func.replace('FUNCTION_NAME', function['name'])
             # Instantiate variables
-            # new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
+            new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
             # Construct format string
             new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
             # Generate arguments
@@ -84,7 +84,7 @@ class CodeGenerator:
             if db.has_key(key):
                 value = db[key]
                 for idx, name in enumerate(arg['name']):
-                    var_inst += value[idx] + ' *' + name + '=NULL, ' 
+                    var_inst += value[idx] + name + '= NULL;\n' 
             else:
                 print ('Error: unsupported type ' + key)
                 break
