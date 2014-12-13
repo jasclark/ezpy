@@ -59,13 +59,22 @@ class CodeGenerator:
     def generate_variable_instantiations(self, function):
         args = function['arguments']
         var_inst = ''
-        db = shelve.open('format_string')
+        db = shelve.open('build/lib/format_string', flag='r')
         for arg in args:
-            try:
-                var_inst += '*' +  db[arg['type']] + '=null,' 
-            finally:
-                print("ERROR: Unsupported data-type")
-                db.close()
+            print 'arg'
+            print arg
+            key = str(arg['type'])
+            boolean = db.has_key(key)
+            print boolean
+            if db.has_key(key):
+                value = db[key]
+                for idx, name in enumerate(arg['name']):
+                    var_inst += value[idx] + ' *' + name + '=NULL, ' 
+            else:
+                print ('Error: unsupported type ' + key)
+                break
+        db.close()
+        return var_inst
 
     def generate_parse_tuple(self, function):
         pass
