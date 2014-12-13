@@ -84,11 +84,12 @@ class CodeGenerator:
             if db.has_key(key):
                 value = db[key]
                 for idx, name in enumerate(arg['name']):
-                    var_inst += value[idx] + name + '= NULL;\n' 
+                    var_inst += value[idx] + name + ' = NULL;\n' 
             else:
                 print ('Error: unsupported type ' + key)
                 break
         db.close()
+        print var_inst
         return var_inst
 
     def generate_arguments(self, function):
