@@ -83,8 +83,11 @@ class CodeGenerator:
             print boolean
             if db.has_key(key):
                 value = db[key]
-                for idx, name in enumerate(arg['name']):
-                    var_inst += value[idx] + name + ' = NULL;\n' 
+                print 'value'
+                print value
+                for idx, data_type in enumerate(value):
+                    if data_type != 'SKIP':
+                        var_inst += value[idx] + arg['name'][idx] + ' = NULL;\n' 
             else:
                 print ('Error: unsupported type ' + key)
                 break

@@ -91,14 +91,14 @@ try:
     db['d'] = ['double ']
     db['D'] = ['Py_complex ']
     db['O'] = ['PyObject *']
-    db['O!'] = ['typeobject ', 'PyObject *']
-    db['O&'] = ['converter', 'anything']
+    db['O!'] = ['SKIP', 'PyObject *']#['typeobject ', 'PyObject *']
+    db['O&'] = []#['converter', 'anything']
     db['S'] = ['PyStringObject *']
     db['U'] = ['PyUnicodeObject *']
     db['t#'] = ['char *', 'int ']
     db['w'] = ['char *']
     db['w#'] = ['char *', 'Py_ssize_t ']
     db['w*'] = ['Py_buffer ']
-    db['(items)'] = ['matching-items']
+    db['(items)'] = []#['matching-items']
 finally: 
     db.close()
