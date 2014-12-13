@@ -78,8 +78,6 @@ class ExtensionParser:
             line = extension_file.readline()
 
         print("extension_dict")
-        # print extension_dict
-        return extension_dict
 
         # Write out to database
         db = shelve.open(EXTENSION_DB)
