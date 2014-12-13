@@ -1,4 +1,5 @@
 import shelve
+from subprocess import call
 
 class CodeGenerator:
     def __init__(self, config):
@@ -9,7 +10,8 @@ class CodeGenerator:
     def generate(self):
         # May be missing steps...
         # Create a .c file with the name
-        f = open(self.config['name'] + '.c', 'w')
+        output_file_name = self.config['name'] + '.c'
+        f = open(output_file_name, 'w')
 
         # Include statements
 
@@ -17,16 +19,17 @@ class CodeGenerator:
         # For each function:
             new_func = self.generate_function_block(function)
             # Create function signature with name
-            new_func = new_func.replace('FUNCTION_NAME', self.config['name'])
+            new_func = new_func.replace('FUNCTION_NAME', function['name'])
             # Instantiate variables
-            new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
+            # new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
             # Construct format string
             new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
-            # Construct ParseTuple function
-
-            # Insert 'code begins/ends' demarcations
-
+            # Generate arguments
+            new_func = new_func.replace('ARGUMENTS', self.generate_arguments(function))
             # Do decrementing to objects
+            new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
+            # Generate return statement
+            new_func = new_func.replace('RETURN_STATEMENT', self.generate_return_statement(function))
 
             # Write out function
             f.write(new_func)
@@ -37,15 +40,27 @@ class CodeGenerator:
         f.write(self.generate_initialization())
         
         f.close()
+
+        # Indent the output c file using indent command. Built into Unix.
+        call(["indent", output_file_name])
+        call(["rm", output_file_name + ".BAK"])
         return
 
     def generate_function_block(self, function):
         return """
-        FUNCTION_NAME(PyObject *dummy, PyObject *args)
+        static PyObject* FUNCTION_NAME(PyObject *dummy, PyObject *args)
         {
             VARIABLE_INIT
 
-            if (!PyArg_ParseTuple(args, FORMAT_STRING, ARGUMENTS)) return NULL;
+            if (!PyArg_ParseTuple(args, FORMAT_STRING,ARGUMENTS)) return NULL;
+
+            /** Write your code here */
+
+            /** End code */
+
+            DECREMENT_REFERENCES
+
+            RETURN_STATEMENT
         }
         """
 
@@ -76,11 +91,32 @@ class CodeGenerator:
         db.close()
         return var_inst
 
-    def generate_parse_tuple(self, function):
-        pass
+    def generate_arguments(self, function):
+        args = ''
+        for arg in function['arguments']:
+            for name in arg['name']:
+                args += ' &' + name + ','
+        return args[:-1]
 
-    def generate_decrement(self, function):
-        pass
+    def generate_decrement(self, function): 
+        decrement_string = ''
+        for arg in function['arguments']:
+            name = arg['name']
+            if name == 'O' or name == 'O!' or name == 'O&':
+                new_decrement = "Py_XDECREF(VARIABLE);\n"
+                new_decrement = new_decrement.replace('VARIABLE', name)
+                decrement_string += new_decrement
+
+        return decrement_string
+
+    def generate_return_statement(self, function):
+        if 'return' in function:
+            pybuild_string = """return Py_BuildValue("FORMAT_STRING", /* Put your return values here. */);"""
+            pybuild_string = pybuild_string.replace("FORMAT_STRING", function['return'])
+            return pybuild_string
+        else:
+            default_none_return = "Py_RETURN_NONE;"
+            return default_none_return
 
     def generate_mymethods(self):
         mymethods_struct = """

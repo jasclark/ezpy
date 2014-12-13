@@ -8,3 +8,4 @@ setuptools-7.0.zip
 *.db
 *.pyc
 *.c
+*_setup.py
