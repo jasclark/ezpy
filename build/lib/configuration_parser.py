@@ -29,11 +29,13 @@ class ConfigurationParser:
 
         name_re = re.compile('^name\s*:\s*([a-zA-Z0-9_.]+)$')
         function_re = re.compile('^function\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_]*)$')
-        arg_re = re.compile('^(\S+)\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_]*)$')
+        arg_re = re.compile('^(\S+)\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_,]*)$')
+        return_re = re.compile('^return:(\S+)$')
 
         line = config_file.readline()
 
         while line:
+            line = line.replace(' ', '')
             line = line.rstrip()
             print line
             name_match = name_re.match(line)
@@ -46,20 +48,27 @@ class ConfigurationParser:
                 new_function = {'name':function_match.group(1), 'arguments':[]}
 
                 while True:
-                    line = config_file.readline().rstrip()
-                    print line
-                    # Match datatype to argument name "int : arg1"
+                    line = config_file.readline().rstrip()  
+                    line = line.replace(' ', '')
+                  
+                    return_match = return_re.match(line)
+                    if return_match:
+                        print 'returned'
+                        new_function['return'] = return_match.group(1)
+                        break
+
                     arg_match = arg_re.match(line)
                     if arg_match:
                         type_name_pair = {'type':arg_match.group(1), 'name':arg_match.group(2)}
                         new_function['arguments'].append(type_name_pair)
+
                     else:
                         break
 
                 internal_config['functions'].append(new_function)
             else:
                 line = config_file.readline()
-
+        print internal_config
         return internal_config
 
 if __name__ == '__main__':

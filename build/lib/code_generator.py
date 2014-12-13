@@ -17,9 +17,9 @@ class CodeGenerator:
         # For each function:
             new_func = self.generate_function_block(function)
             # Create function signature with name
-            new_func = new_func.replace('FUNCTION_NAME', self.config['name'])
+            new_func = new_func.replace('FUNCTION_NAME', function['name'])
             # Instantiate variables
-            new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
+            # new_func = new_func.replace('VARIABLE_INIT', self.generate_variable_instantiations(function))
             # Construct format string
             new_func = new_func.replace('FORMAT_STRING', wrap_quotes(self.generate_format_string(function)))
             # Generate arguments
@@ -94,8 +94,13 @@ class CodeGenerator:
         return decrement_string
 
     def generate_return_statement(self, function):
-        default_none_return = "Py_RETURN_NONE;"
-        return default_none_return
+        if 'return' in function:
+            pybuild_string = """return Py_BuildValue("FORMAT_STRING", /* Put your return values here. */);"""
+            pybuild_string = pybuild_string.replace("FORMAT_STRING", function['return'])
+            return pybuild_string
+        else:
+            default_none_return = "Py_RETURN_NONE;"
+            return default_none_return
 
     def generate_mymethods(self):
         mymethods_struct = """
