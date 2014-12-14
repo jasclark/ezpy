@@ -153,7 +153,6 @@ class CodeGenerator:
             initMODULE_NAME(void)
             {
                 (void)Py_InitModule(MODULE_NAME, mymethods);
-                import_array();
             }
         """
 
