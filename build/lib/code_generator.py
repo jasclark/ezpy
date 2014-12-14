@@ -89,7 +89,8 @@ class CodeGenerator:
                 for idx, data_type in enumerate(value):
                     if data_type != 'SKIP':
                         var_inst += value[idx] + arg['name'][idx]
-                        if data_type == 'O' or data_type == 'O!' or data_type == 'O&':
+                        print 'data type ' + data_type
+                        if key == 'O' or key == 'O!' or key == 'O&':
                             var_inst += ' = NULL;\n'
                         else:
                             var_inst += ';\n' 
