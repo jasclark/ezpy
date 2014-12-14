@@ -9,3 +9,5 @@ setuptools-7.0.zip
 *.pyc
 *.c
 *_setup.py
+build/lib.macosx-10.10-intel-2.7/
+build/temp.macosx-10.10-intel-2.7/

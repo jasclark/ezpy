@@ -12,6 +12,7 @@ class CodeGenerator:
         # Create a .c file with the name
         output_file_name = self.config['name'] + '.c'
         f = open(output_file_name, 'w')
+        f.write("#include \"Python.h\"\n")
 
         # Include statements
 
@@ -87,7 +88,11 @@ class CodeGenerator:
                 print value
                 for idx, data_type in enumerate(value):
                     if data_type != 'SKIP':
-                        var_inst += value[idx] + arg['name'][idx] + ' = NULL;\n' 
+                        var_inst += value[idx] + arg['name'][idx]
+                        if data_type == 'O' or data_type == 'O!' or data_type == 'O&':
+                            var_inst += ' = NULL;\n'
+                        else:
+                            var_inst += ';\n' 
             else:
                 print ('Error: unsupported type ' + key)
                 break
