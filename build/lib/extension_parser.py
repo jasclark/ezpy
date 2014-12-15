@@ -24,6 +24,7 @@ class ExtensionParser:
         formatStringArgs_re = re.compile('^format_string_args\s*:\s*([^0-9_]+[a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]*)$')
         init_re = re.compile('^init\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_]+[^0-9_]*)$')
         code_re = re.compile('^code\s*:\s*')
+        includeDirs_re = re.compile('^include_dirs*:\s*([a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]+[^0-9_]*)$')
 
         line = extension_file.readline()
         while line: 
@@ -68,6 +69,12 @@ class ExtensionParser:
             init_match = init_re.match(line)
             if init_match:
                 extension_dict['init'] = init_match.group(1)
+
+            includeDirs_match = includeDirs_re.match(line)
+            if includeDirs_match:
+                includeDirs = includeDirs_match.group(1)
+                includeDirs = includeDirs.split(',')
+                extension_dict['include_dirs'] = includeDirs
 
             # put "code" parsing in the dictionary
             code_match = code_re.match(line)
