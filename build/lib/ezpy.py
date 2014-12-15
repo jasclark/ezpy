@@ -32,8 +32,4 @@ class Extend(Command):
         config_parser = ExtensionParser()
         config = config_parser.parse(parsed_args.config_file)
         print config
-        # code_generator = CodeGenerator(config)
-        # code_generator.generate()
-        # setup_script_generator = SetupScriptGenerator()
-        # setup_script_generator.generate(config)
 

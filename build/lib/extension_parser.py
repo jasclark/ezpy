@@ -11,7 +11,8 @@ class ExtensionParser:
         #                     'num_vars':None, 
         #                     'format_string': None, 
         #                     'format_string_args': None,
-        #                     'code': None
+        #                     'code': None,
+        #                     'init': None
         #                      }
         extension_dict= {}
 
@@ -23,7 +24,6 @@ class ExtensionParser:
         formatStringArgs_re = re.compile('^format_string_args\s*:\s*([^0-9_]+[a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]*)$')
         init_re = re.compile('^init\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_]+[^0-9_]*)$')
         code_re = re.compile('^code\s*:\s*')
-        
 
         line = extension_file.readline()
         while line: 
@@ -34,7 +34,9 @@ class ExtensionParser:
             if include_match:
                 # print("include_match")
                 # print(include_match)
-                extension_dict['include'] = include_match.group(1)
+                includes = include_match.group(1)
+                include = includes.split(',')
+                extension_dict['include'] = include
 
             dataType_match = dataType_re.match(line)
             if dataType_match: 
@@ -52,7 +54,6 @@ class ExtensionParser:
                 extension_dict['format_string'] = formatString_match.group(1)
 
             # append arguments to a list 
-            # check this 
             formatStringArgs_match = formatStringArgs_re.match(line)
             if formatStringArgs_match:
                 print("Argument 1???")
@@ -82,8 +83,8 @@ class ExtensionParser:
                 print(extension_dict['code'])
             line = extension_file.readline()
 
-        # print("extension_dict")
-        # print(extension_dict)
+        print("extension_dict")
+        print(extension_dict)
         # Write out to database
         db = shelve.open(EXTENSION_DB)
         try:
