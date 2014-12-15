@@ -31,6 +31,8 @@ class CodeGenerator:
             new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
             # Generate return statement
             new_func = new_func.replace('RETURN_STATEMENT', self.generate_return_statement(function))
+            # Generate extension code segment
+            new_func = new_func.replace('EXTENSION_CODE', function['extension_code'])
 
             # Write out function
             f.write(new_func)
@@ -54,6 +56,8 @@ class CodeGenerator:
             VARIABLE_INIT
 
             if (!PyArg_ParseTuple(args, FORMAT_STRING,ARGUMENTS)) return NULL;
+
+            EXTENSION_CODE
 
             /** Write your code here */
 
