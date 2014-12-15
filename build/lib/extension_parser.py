@@ -21,7 +21,9 @@ class ExtensionParser:
         numVars_re = re.compile('^num_vars\s*:\s*([a-zA-Z0-9_]*)$')
         formatString_re = re.compile('^format_string\s*:\s*([a-zA-Z0-9_]+[^0-9_]*)$')
         formatStringArgs_re = re.compile('^format_string_args\s*:\s*([^0-9_]+[a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]*)$')
+        init_re = re.compile('^init\s*:\s*([a-zA-Z_]+[a-zA-Z0-9_]+[^0-9_]*)$')
         code_re = re.compile('^code\s*:\s*')
+        
 
         line = extension_file.readline()
         while line: 
@@ -62,7 +64,11 @@ class ExtensionParser:
                 print("What is in format_string_arg")
                 print(extension_dict['format_string_args'])
 
-            # put "code" parsing in th dictionary
+            init_match = init_re.match(line)
+            if init_match:
+                extension_dict['init'] = init_match.group(1)
+
+            # put "code" parsing in the dictionary
             code_match = code_re.match(line)
             if code_match:
                 print 'here'
@@ -76,6 +82,8 @@ class ExtensionParser:
                 print(extension_dict['code'])
             line = extension_file.readline()
 
+        # print("extension_dict")
+        # print(extension_dict)
         # Write out to database
         db = shelve.open(EXTENSION_DB)
         try:

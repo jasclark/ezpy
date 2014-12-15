@@ -67,6 +67,11 @@ class CodeGenerator:
             new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
             # Generate return statement
             new_func = new_func.replace('RETURN_STATEMENT', self.generate_return_statement(function))
+            # Generate extension code segment
+            if 'extension_code' in function:
+                new_func = new_func.replace('EXTENSION_CODE', '\n' + function['extension_code'])
+            else: 
+                new_func = new_func.replace('EXTENSION_CODE', '')
 
             # Write out function
             f.write(new_func)
@@ -90,6 +95,7 @@ class CodeGenerator:
             VARIABLE_INIT
 
             if (!PyArg_ParseTuple(args, FORMAT_STRING,ARGUMENTS)) return NULL;
+            EXTENSION_CODE
 
             /** Write your code here */
 
@@ -189,11 +195,19 @@ class CodeGenerator:
             initMODULE_NAME(void)
             {
                 (void)Py_InitModule(MODULE_NAME, mymethods);
+                EXTENSION_INIT
             }
         """
 
         init_func = init_func.replace('MODULE_NAME', self.config['name'], 1)
         init_func = init_func.replace('MODULE_NAME', wrap_quotes(self.config['name']), 1)
+        init_extension_code = ''
+        if 'extension_init' in self.config:
+            for init in self.config['extension_init']:
+                init_extension_code += init + '\n'
+            init_func = init_func.replace('EXTENSION_INIT', init_extension_code)
+        else:
+            init_func = init_func.replace('EXTENSION_INIT', '')
 
         return init_func
 
