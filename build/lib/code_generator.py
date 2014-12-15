@@ -37,8 +37,9 @@ class CodeGenerator:
                         self.config['init'].append(extension['init'])
                     if 'include' not in self.config:
                         self.config['include'] = []
-                    if extension['include'] not in self.config['include']:
-                        self.config['include'].append(extension['include'])
+                    for include in extension['include']:
+                        if include not in self.config['include']:
+                            self.config['include'].append(include)
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
@@ -87,13 +88,18 @@ class CodeGenerator:
             file_cache += new_func
 
         # Create my methods struct
+        print 'before'
         f.write(self.generate_include())
+        print 'here1'
         f.write(file_cache)
+        print 'here2'
         f.write(self.generate_mymethods())
+        print 'here3'
         # Create intialization function for the module
         f.write(self.generate_initialization())
         
         f.close()
+        print 'after'
 
         # Indent the output c file using indent command. Built into Unix.
         call(["indent", '-di1', output_file_name])
@@ -230,7 +236,11 @@ class CodeGenerator:
     def generate_include(self):
         include = "#include \"Python.h\"\n"
         if 'include' in self.config:
+            print 'config inclue'
+            print self.config['include']
             for include_file in self.config['include']:
+                print 'include_file'
+                print include_file
                 include += "#include \"" + include_file + "\"\n"
         return include
 
