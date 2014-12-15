@@ -38,6 +38,11 @@ class CodeGenerator:
                     for include in extension['include']:
                         if include not in self.config['include']:
                             self.config['include'].append(include)
+                    if 'include_dirs' not in self.config:
+                        self.config['include_dirs'] = []
+                    for incude_dir in extension['include_dirs']:
+                        if include_dir not in self.config['include_dirs']:
+                            self.config['include.dirs'].append(include_dir)
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
