@@ -4,6 +4,12 @@ from subprocess import call
 class CodeGenerator:
     def __init__(self, config):
         self.config = config
+        self.uniquenum = 0
+
+    def uniqueid(self):
+        ret = self.uniquenum
+        uniquenum += 1
+        return 'a' + ret
 
     # Separate functionality into different functions and call them here?
     # Outputs file
@@ -14,9 +20,39 @@ class CodeGenerator:
         f = open(output_file_name, 'w')
         f.write("#include \"Python.h\"\n")
 
+        EXTENSION_DB_PATH = 'build/lib/extension.db'
+        extension_db = shelve.open(EXTENSION_DB_PATH, 'r')
         # Include statements
 
         for function in self.config['functions']:
+
+        # preprocess args
+        for arg in function['arguments']:
+            if arg['type'] in extension_db:
+                extension = arg['type']
+                arg['type'] = extension['format_string']
+                arg['extension_var_name'] = arg['name']
+                arg['name'] = extension['format_string_args']
+                extension_code = extension_db['extension_code']
+
+                for format_string_arg in extension['format_string_args']:
+                    if format_string_arg[0] == '%':
+                        uniqueid = self.uniqueid()
+                        # Replace anywhere this variable arises with this uniqueid
+                        extension_code = extension_code.replace('format_string_arg', uniqueid)
+                        arg['name'].append(uniqueid)
+                        arg['name'].pop(0)
+
+                name_match_re = re.compile('%name(\d+)')
+                matches = name_match_re.findall(extension_code)
+                for match in matches:
+                    arg_num = int(match.group(1)) - 1
+                    extension_code = extension_code.replace(match.group(0), arg['extension_var_name'][arg_num])
+
+                if 'extension_code' not in function:
+                    function['extension_code'] = ''
+                function['extension_code'] += extension_code
+
         # For each function:
             new_func = self.generate_function_block(function)
             # Create function signature with name

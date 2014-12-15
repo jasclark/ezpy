@@ -9,9 +9,10 @@ class ConfigurationParser:
     #                     {
     #                         'name':'function1',
     #                         'arguments': [
-    #                             {'type':'O!', 'name':['arg1', 'arg2']},
-    #                             {'type':'s', 'name':['arg2']},
+    #                             {'type':'O!', 'name':['Py_arrayType', '%u1'], 'ext_var_name':[matrix1]},
+    #                             {'type':'numpy_array', 'name':['matrix1']},
     #                         ] 
+    #                         'extension_code' : // If extension code 
     #                     },
     #                     {
     #                         'name':'function2',
@@ -21,6 +22,7 @@ class ConfigurationParser:
     #                         ] 
     #                     },
     #                 ]
+    #      
     # }
 
     def parse(self, file_name):
