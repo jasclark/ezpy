@@ -64,6 +64,13 @@ class CodeGenerator:
                     for match in matches:
                         arg_num = int(match) - 1
                         extension_code = extension_code.replace("%name"+match, arg['extension_var_name'][arg_num])
+
+                    uvar_match_re = re.compile('%u(\d+)')
+                    matches = uvar_match_re.findall(extension_code)
+                    for match in matches:
+                        unique = self.uniqueid()
+                        extension_code = extension_code.replace("%u"+match, unique)
+                        
                     if 'extension_code' not in function:
                         function['extension_code'] = ''
                     function['extension_code'] += extension_code
