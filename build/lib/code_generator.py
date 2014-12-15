@@ -21,14 +21,14 @@ class CodeGenerator:
         f.write("#include \"Python.h\"\n")
 
         EXTENSION_DB_PATH = 'build/lib/extension.db'
-        extension_db = shelve.open(EXTENSION_DB_PATH, 'r')
+        extension_db = shelve.open(EXTENSION_DB_PATH)
         # Include statements
 
         for function in self.config['functions']:
             # preprocess args
             for arg in function['arguments']:
                 if arg['type'] in extension_db:
-                    extension = arg['type']
+                    extension = extension_db[arg['type']]
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
