@@ -1,4 +1,5 @@
 import shelve
+import re
 from subprocess import call
 
 class CodeGenerator:
@@ -8,8 +9,8 @@ class CodeGenerator:
 
     def uniqueid(self):
         ret = self.uniquenum
-        uniquenum += 1
-        return 'a' + ret
+        self.uniquenum += 1
+        return 'a' + str(ret)
 
     # Separate functionality into different functions and call them here?
     # Outputs file
@@ -18,39 +19,49 @@ class CodeGenerator:
         # Create a .c file with the name
         output_file_name = self.config['name'] + '.c'
         f = open(output_file_name, 'w')
-        f.write("#include \"Python.h\"\n")
 
         EXTENSION_DB_PATH = 'build/lib/extension.db'
         extension_db = shelve.open(EXTENSION_DB_PATH)
         # Include statements
-
+        file_cache = ''
         for function in self.config['functions']:
             # preprocess args
             for arg in function['arguments']:
+                print 'arg'
+                print arg
                 if arg['type'] in extension_db:
                     extension = extension_db[arg['type']]
+                    if 'init' not in self.config:
+                        self.config['init'] = []
+                    if extension['init'] not in self.config['init']:
+                        self.config['init'].append(extension['init'])
+                    if 'include' not in self.config:
+                        self.config['include'] = []
+                    if extension['include'] not in self.config['include']:
+                        self.config['include'].append(extension['include'])
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
-                    extension_code = extension_db['extension_code']
-
-                    for format_string_arg in extension['format_string_args']:
+                    extension_code = extension['code']
+                    for idx, format_string_arg in enumerate(extension['format_string_args']):
                         if format_string_arg[0] == '%':
                             uniqueid = self.uniqueid()
                             # Replace anywhere this variable arises with this uniqueid
-                            extension_code = extension_code.replace('format_string_arg', uniqueid)
-                            arg['name'].append(uniqueid)
-                            arg['name'].pop(0)
-
+                            extension_code = extension_code.replace(format_string_arg, uniqueid)
+                            print 'name before'
+                            print arg['name']
+                            arg['name'][idx] = uniqueid
+                            print 'name aftr'
+                            print arg['name']
                     name_match_re = re.compile('%name(\d+)')
                     matches = name_match_re.findall(extension_code)
                     for match in matches:
-                        arg_num = int(match.group(1)) - 1
-                        extension_code = extension_code.replace(match.group(0), arg['extension_var_name'][arg_num])
-
+                        arg_num = int(match) - 1
+                        extension_code = extension_code.replace("%name"+match, arg['extension_var_name'][arg_num])
                     if 'extension_code' not in function:
                         function['extension_code'] = ''
                     function['extension_code'] += extension_code
+         
 
         # For each function:
             new_func = self.generate_function_block(function)
@@ -73,9 +84,11 @@ class CodeGenerator:
                 new_func = new_func.replace('EXTENSION_CODE', '')
 
             # Write out function
-            f.write(new_func)
+            file_cache += new_func
 
         # Create my methods struct
+        f.write(self.generate_include())
+        f.write(file_cache)
         f.write(self.generate_mymethods())
         # Create intialization function for the module
         f.write(self.generate_initialization())
@@ -158,6 +171,10 @@ class CodeGenerator:
                     new_decrement = "Py_XDECREF(VARIABLE);\n"
                     new_decrement = new_decrement.replace('VARIABLE', name)
                     decrement_string += new_decrement
+                for name in arg['extension_var_name']:
+                    new_decrement = "Py_XDECREF(VARIABLE);\n"
+                    new_decrement = new_decrement.replace('VARIABLE', name)
+                    decrement_string += new_decrement  
 
         return decrement_string
 
@@ -201,8 +218,8 @@ class CodeGenerator:
         init_func = init_func.replace('MODULE_NAME', self.config['name'], 1)
         init_func = init_func.replace('MODULE_NAME', wrap_quotes(self.config['name']), 1)
         init_extension_code = ''
-        if 'extension_init' in self.config:
-            for init in self.config['extension_init']:
+        if 'init' in self.config:
+            for init in self.config['init']:
                 init_extension_code += init + '\n'
             init_func = init_func.replace('EXTENSION_INIT', init_extension_code)
         else:
@@ -210,6 +227,12 @@ class CodeGenerator:
 
         return init_func
 
+    def generate_include(self):
+        include = "#include \"Python.h\"\n"
+        if 'include' in self.config:
+            for include_file in self.config['include']:
+                include += "#include \"" + include_file + "\"\n"
+        return include
 
 def wrap_quotes(string):
     return '\"' + string + '\"'
