@@ -55,7 +55,6 @@ class ConfigurationParser:
                   
                     return_match = return_re.match(line)
                     if return_match:
-                        print 'returned'
                         new_function['return'] = return_match.group(1)
                         break
 
@@ -66,6 +65,7 @@ class ConfigurationParser:
                         new_function['arguments'].append(type_name_pair)
 
                     else:
+                        line = config_file.readline()
                         break
 
                 internal_config['functions'].append(new_function)

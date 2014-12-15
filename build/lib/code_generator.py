@@ -27,8 +27,6 @@ class CodeGenerator:
         for function in self.config['functions']:
             # preprocess args
             for arg in function['arguments']:
-                print 'arg'
-                print arg
                 if arg['type'] in extension_db:
                     extension = extension_db[arg['type']]
                     if 'init' not in self.config:
@@ -54,11 +52,8 @@ class CodeGenerator:
                             uniqueid = self.uniqueid()
                             # Replace anywhere this variable arises with this uniqueid
                             extension_code = extension_code.replace(format_string_arg, uniqueid)
-                            print 'name before'
-                            print arg['name']
                             arg['name'][idx] = uniqueid
-                            print 'name aftr'
-                            print arg['name']
+
                     name_match_re = re.compile('%name(\d+)')
                     matches = name_match_re.findall(extension_code)
                     for match in matches:
@@ -70,7 +65,7 @@ class CodeGenerator:
                     for match in matches:
                         unique = self.uniqueid()
                         extension_code = extension_code.replace("%u"+match, unique)
-                        
+
                     if 'extension_code' not in function:
                         function['extension_code'] = ''
                     function['extension_code'] += extension_code
@@ -100,18 +95,13 @@ class CodeGenerator:
             file_cache += new_func
 
         # Create my methods struct
-        print 'before'
         f.write(self.generate_include())
-        print 'here1'
         f.write(file_cache)
-        print 'here2'
         f.write(self.generate_mymethods())
-        print 'here3'
         # Create intialization function for the module
         f.write(self.generate_initialization())
         
         f.close()
-        print 'after'
 
         # Indent the output c file using indent command. Built into Unix.
         call(["indent", '-di1', output_file_name])
@@ -149,19 +139,13 @@ class CodeGenerator:
         var_inst = ''
         db = shelve.open('build/lib/format_string', flag='r')
         for arg in args:
-            print 'arg'
-            print arg
             key = str(arg['type'])
             boolean = db.has_key(key)
-            print boolean
             if db.has_key(key):
                 value = db[key]
-                print 'value'
-                print value
                 for idx, data_type in enumerate(value):
                     if data_type != 'SKIP':
                         var_inst += value[idx] + arg['name'][idx]
-                        print 'data type ' + data_type
                         if key == 'O' or key == 'O!' or key == 'O&':
                             var_inst += ' = NULL;\n'
                         else:
@@ -170,7 +154,6 @@ class CodeGenerator:
                 print ('Error: unsupported type ' + key)
                 break
         db.close()
-        print var_inst
         return var_inst
 
     def generate_arguments(self, function):
@@ -248,11 +231,7 @@ class CodeGenerator:
     def generate_include(self):
         include = "#include \"Python.h\"\n"
         if 'include' in self.config:
-            print 'config inclue'
-            print self.config['include']
             for include_file in self.config['include']:
-                print 'include_file'
-                print include_file
                 include += "#include \"" + include_file + "\"\n"
         return include
 
