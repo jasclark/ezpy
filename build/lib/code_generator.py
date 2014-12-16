@@ -56,12 +56,14 @@ class CodeGenerator:
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
-                    extension_code = extension['code']
+                    if 'code' in extension:
+                        extension_code = extension['code']
                     for idx, format_string_arg in enumerate(extension['format_string_args']):
                         if format_string_arg[0] == '%':
                             uniqueid = self.uniqueid()
                             # Replace anywhere this variable arises with this uniqueid
-                            extension_code = extension_code.replace(format_string_arg, uniqueid)
+                            if 'code' in extension:
+                                extension_code = extension_code.replace(format_string_arg, uniqueid)
                             arg['name'][idx] = uniqueid
 
                     name_match_re = re.compile('%name(\d+)')
