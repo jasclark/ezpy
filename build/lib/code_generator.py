@@ -53,6 +53,10 @@ class CodeGenerator:
                         for setup_import in extension['setup_import']:
                             if setup_import not in self.config['setup_import']:
                                 self.config['setup_import'].append(setup_import)
+                    if 'cleanup' in extension:
+                        if 'cleanup' not in function:
+                            function['cleanup'] = ''
+                        function['cleanup'] += extension['cleanup'] + '\n'
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
@@ -77,7 +81,7 @@ class CodeGenerator:
                     for match in matches:
                         unique = self.uniqueid()
                         extension_code = extension_code.replace("%u"+match, unique)
-
+                        function['cleanup'] = function['cleanup'].replace("%u"+match, unique)
                     if 'extension_code' not in function:
                         function['extension_code'] = ''
                     function['extension_code'] += extension_code
@@ -94,7 +98,10 @@ class CodeGenerator:
             # Generate arguments
             new_func = new_func.replace('ARGUMENTS', self.generate_arguments(function))
             # Do decrementing to objects
-            new_func = new_func.replace('DECREMENT_REFERENCES', self.generate_decrement(function))
+            if 'cleanup' in function:
+                new_func = new_func.replace('CLEANUP_CODE', function['cleanup'])
+            else:
+                new_func = new_func.replace('CLEANUP_CODE', '')
             # Generate return statement
             new_func = new_func.replace('RETURN_STATEMENT', self.generate_return_statement(function))
             # Generate extension code segment
@@ -133,7 +140,7 @@ class CodeGenerator:
 
             /** End code */
 
-            DECREMENT_REFERENCES
+            CLEANUP_CODE
 
             RETURN_STATEMENT
         }
@@ -176,7 +183,7 @@ class CodeGenerator:
                 args += ' &' + name + ','
         return args[:-1]
 
-    def generate_decrement(self, function): 
+    def generate_cleanup(self, function): 
         decrement_string = ''
         # for arg in function['arguments']:
         #     data_type = arg['type']
