@@ -26,7 +26,7 @@ class ExtensionParser:
         code_re = re.compile('^code\s*:\s*')
         includeDirs_re = re.compile('^include_dirs*:\s*([a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]+[^0-9_]*)$')
         setupImport_re = re.compile('^setup_import*:\s*([a-zA-Z0-9_]+[^0-9_]+[a-zA-Z0-9_]+[^0-9_]*)$')
-        cleanup_re = re.compile('^code\s*:\s*')
+        cleanup_re = re.compile('^cleanup\s*:\s*')
         
         line = extension_file.readline()
         while line: 
