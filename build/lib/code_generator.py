@@ -25,6 +25,7 @@ class CodeGenerator:
         # Include statements
         file_cache = ''
         for function in self.config['functions']:
+            function['instantiated_vars'] = []
             # preprocess args
             for arg in function['arguments']:
                 if arg['type'] in extension_db:
@@ -147,6 +148,7 @@ class CodeGenerator:
                     if data_type != 'SKIP':
                         var_inst += value[idx] + arg['name'][idx]
                         if key == 'O' or key == 'O!' or key == 'O&':
+                            function['instantiated_vars'].append(arg['name'][idx])
                             var_inst += ' = NULL;\n'
                         else:
                             var_inst += ';\n' 
@@ -165,17 +167,21 @@ class CodeGenerator:
 
     def generate_decrement(self, function): 
         decrement_string = ''
-        for arg in function['arguments']:
-            data_type = arg['type']
-            if data_type == 'O' or data_type == 'O!' or data_type == 'O&':
-                for name in arg['name']:
-                    new_decrement = "Py_XDECREF(VARIABLE);\n"
-                    new_decrement = new_decrement.replace('VARIABLE', name)
-                    decrement_string += new_decrement
-                for name in arg['extension_var_name']:
-                    new_decrement = "Py_XDECREF(VARIABLE);\n"
-                    new_decrement = new_decrement.replace('VARIABLE', name)
-                    decrement_string += new_decrement  
+        # for arg in function['arguments']:
+        #     data_type = arg['type']
+        #     if data_type == 'O' or data_type == 'O!' or data_type == 'O&':
+        #         for name in arg['name']:
+        #             new_decrement = "Py_XDECREF(VARIABLE);\n"
+        #             new_decrement = new_decrement.replace('VARIABLE', name)
+        #             decrement_string += new_decrement
+        #         for name in arg['extension_var_name']:
+        #             new_decrement = "Py_XDECREF(VARIABLE);\n"
+        #             new_decrement = new_decrement.replace('VARIABLE', name)
+        #             decrement_string += new_decrement  
+        for arg in function['instantiated_vars']:
+            new_decrement = "Py_XDECREF(VARIABLE);\n"
+            new_decrement = new_decrement.replace('VARIABLE', arg)
+            decrement_string += new_decrement
 
         return decrement_string
 
