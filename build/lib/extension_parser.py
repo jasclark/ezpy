@@ -94,6 +94,7 @@ class ExtensionParser:
                             cleanup_segment += line 
                             line = extension_file.readline() 
                         extension_dict['cleanup'] = cleanup_segment
+                        extension_dict['code'] = code_segment
                         break
                     code_segment += line
                     line = extension_file.readline()
