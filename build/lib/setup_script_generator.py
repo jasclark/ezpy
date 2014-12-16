@@ -17,12 +17,14 @@ setup(
       )
 """
         include_dirs = ''
-        for include_dir in config['include_dirs']:
-            include_dirs += include_dir + ', '
+        if 'include_dirs' in config:
+            for include_dir in config['include_dirs']:
+                include_dirs += include_dir + ', '
 
         setup_imports = ''
-        for setup_import in config['setup_import']:
-            setup_imports += setup_import
+        if 'setup_import' in config:
+            for setup_import in config['setup_import']:
+                setup_imports += setup_import
 
         script_string = script_string.replace('MODULE_NAME', config['name'])
         script_string = script_string.replace('DIRS', include_dirs)

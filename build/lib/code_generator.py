@@ -30,25 +30,29 @@ class CodeGenerator:
             for arg in function['arguments']:
                 if arg['type'] in extension_db:
                     extension = extension_db[arg['type']]
-                    if 'init' not in self.config:
-                        self.config['init'] = []
-                    if extension['init'] not in self.config['init']:
-                        self.config['init'].append(extension['init'])
-                    if 'include' not in self.config:
-                        self.config['include'] = []
-                    for include in extension['include']:
-                        if include not in self.config['include']:
-                            self.config['include'].append(include)
-                    if 'include_dirs' not in self.config:
-                        self.config['include_dirs'] = []
-                    for include_dir in extension['include_dirs']:
-                        if include_dir not in self.config['include_dirs']:
-                            self.config['include_dirs'].append(include_dir)
-                    if 'setup_import' not in self.config:
-                        self.config['setup_import'] = []
-                    for setup_import in extension['setup_import']:
-                        if setup_import not in self.config['setup_import']:
-                            self.config['setup_import'].append(setup_import)
+                    if 'init' in extension:
+                        if 'init' not in self.config:
+                            self.config['init'] = []
+                        if extension['init'] not in self.config['init']:
+                            self.config['init'].append(extension['init'])
+                    if 'include' in extension:
+                        if 'include' not in self.config:
+                            self.config['include'] = []
+                        for include in extension['include']:
+                            if include not in self.config['include']:
+                                self.config['include'].append(include)
+                    if 'include_dirs' in extension:
+                        if 'include_dirs' not in self.config:
+                            self.config['include_dirs'] = []
+                        for include_dir in extension['include_dirs']:
+                            if include_dir not in self.config['include_dirs']:
+                                self.config['include_dirs'].append(include_dir)
+                    if 'setup_import' in extension:
+                        if 'setup_import' not in self.config:
+                            self.config['setup_import'] = []
+                        for setup_import in extension['setup_import']:
+                            if setup_import not in self.config['setup_import']:
+                                self.config['setup_import'].append(setup_import)
                     arg['type'] = extension['format_string']
                     arg['extension_var_name'] = arg['name']
                     arg['name'] = extension['format_string_args']
