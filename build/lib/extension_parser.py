@@ -33,11 +33,12 @@ class ExtensionParser:
             line = line.rstrip()
             print line
             include_match = include_re.match(line) 
+
             if include_match:
                 # print("include_match")
                 # print(include_match)
                 includes = include_match.group(1)
-                include = includes.split(',')
+                include = includes.replace(' ', '').split(',')
                 extension_dict['include'] = include
 
             dataType_match = dataType_re.match(line)
@@ -57,7 +58,7 @@ class ExtensionParser:
             formatStringArgs_match = formatStringArgs_re.match(line)
             if formatStringArgs_match:
                 args = formatStringArgs_match.group(1)
-                names = args.split(',')
+                names = args.replace(' ', '').split(',')
                 extension_dict['format_string_args'] = names
                 # extension_dict['format_string_args'][0] = numVars_match.group(1)
                 # extension_dict['format_string_args'][1] = numVars_match_group(2)
@@ -69,13 +70,13 @@ class ExtensionParser:
             includeDirs_match = includeDirs_re.match(line)
             if includeDirs_match:
                 includeDirs = includeDirs_match.group(1)
-                includeDir = includeDirs.split(',')
+                includeDir = includeDirs.replace(' ', '').split(',')
                 extension_dict['include_dirs'] = includeDir
 
             setupImport_match = setupImport_re.match(line)
             if setupImport_match:
                 imports = setupImport_match.group(1)
-                importList = imports.split(',')
+                importList = imports.replace(', ', ',').split(',')
                 extension_dict['setup_import'] = importList
 
             # put "code" parsing in the dictionary
@@ -89,8 +90,8 @@ class ExtensionParser:
                 extension_dict['code'] = code_segment
             line = extension_file.readline()
 
-        # print("extension_dict")
-        # print(extension_dict)
+        print("extension_dict")
+        print(extension_dict)
         # Write out to database
         db = shelve.open(EXTENSION_DB)
         try:
