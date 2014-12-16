@@ -39,7 +39,6 @@ class ConfigurationParser:
         while line:
             line = line.replace(' ', '')
             line = line.rstrip()
-            print line
             name_match = name_re.match(line)
             if name_match:
                 internal_config['name'] = name_match.group(1)
@@ -71,7 +70,6 @@ class ConfigurationParser:
                 internal_config['functions'].append(new_function)
             else:
                 line = config_file.readline()
-        print internal_config
         return internal_config
 
 

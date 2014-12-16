@@ -32,7 +32,6 @@ class ExtensionParser:
         while line: 
             # line = line.replace(' ', '')
             line = line.rstrip()
-            print line
             include_match = include_re.match(line) 
 
             if include_match:
@@ -101,8 +100,6 @@ class ExtensionParser:
                 extension_dict['code'] = code_segment
             line = extension_file.readline()
 
-        print("extension_dict")
-        print(extension_dict)
         # Write out to database
         db = shelve.open(EXTENSION_DB)
         try:
